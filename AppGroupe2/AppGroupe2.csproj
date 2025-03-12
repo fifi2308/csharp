@@ -327,6 +327,7 @@
     <None Include="Resources\010c7810e3b8bb164c14b2ac1d94d25d.jpg" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include=".gitignore" />
     <Content Include="Error\erreur.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>erreur.txt</LastGenOutput>
