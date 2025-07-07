@@ -54,7 +54,7 @@
             // btnChoisir
             // 
             this.btnChoisir.Location = new System.Drawing.Point(384, 52);
-            this.btnChoisir.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnChoisir.Margin = new System.Windows.Forms.Padding(4);
             this.btnChoisir.Name = "btnChoisir";
             this.btnChoisir.Size = new System.Drawing.Size(77, 23);
             this.btnChoisir.TabIndex = 52;
@@ -65,7 +65,7 @@
             // 
             this.dgAgenda.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgAgenda.Location = new System.Drawing.Point(384, 87);
-            this.dgAgenda.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.dgAgenda.Margin = new System.Windows.Forms.Padding(4);
             this.dgAgenda.Name = "dgAgenda";
             this.dgAgenda.RowHeadersWidth = 51;
             this.dgAgenda.Size = new System.Drawing.Size(821, 513);
@@ -74,7 +74,7 @@
             // btnSupprimer
             // 
             this.btnSupprimer.Location = new System.Drawing.Point(237, 523);
-            this.btnSupprimer.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnSupprimer.Margin = new System.Windows.Forms.Padding(4);
             this.btnSupprimer.Name = "btnSupprimer";
             this.btnSupprimer.Size = new System.Drawing.Size(100, 28);
             this.btnSupprimer.TabIndex = 49;
@@ -84,17 +84,18 @@
             // btnModifier
             // 
             this.btnModifier.Location = new System.Drawing.Point(129, 523);
-            this.btnModifier.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnModifier.Margin = new System.Windows.Forms.Padding(4);
             this.btnModifier.Name = "btnModifier";
             this.btnModifier.Size = new System.Drawing.Size(100, 28);
             this.btnModifier.TabIndex = 47;
             this.btnModifier.Text = "Modifier";
             this.btnModifier.UseVisualStyleBackColor = true;
+            this.btnModifier.Click += new System.EventHandler(this.btnModifier_Click);
             // 
             // btnAjouter
             // 
             this.btnAjouter.Location = new System.Drawing.Point(21, 523);
-            this.btnAjouter.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnAjouter.Margin = new System.Windows.Forms.Padding(4);
             this.btnAjouter.Name = "btnAjouter";
             this.btnAjouter.Size = new System.Drawing.Size(100, 28);
             this.btnAjouter.TabIndex = 46;
@@ -105,7 +106,7 @@
             // txtCrenau
             // 
             this.txtCrenau.Location = new System.Drawing.Point(21, 395);
-            this.txtCrenau.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtCrenau.Margin = new System.Windows.Forms.Padding(4);
             this.txtCrenau.Name = "txtCrenau";
             this.txtCrenau.Size = new System.Drawing.Size(311, 22);
             this.txtCrenau.TabIndex = 42;
@@ -123,7 +124,7 @@
             // txtLieu
             // 
             this.txtLieu.Location = new System.Drawing.Point(21, 330);
-            this.txtLieu.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtLieu.Margin = new System.Windows.Forms.Padding(4);
             this.txtLieu.Name = "txtLieu";
             this.txtLieu.Size = new System.Drawing.Size(311, 22);
             this.txtLieu.TabIndex = 41;
@@ -141,7 +142,7 @@
             // txtHeureFin
             // 
             this.txtHeureFin.Location = new System.Drawing.Point(21, 265);
-            this.txtHeureFin.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtHeureFin.Margin = new System.Windows.Forms.Padding(4);
             this.txtHeureFin.Name = "txtHeureFin";
             this.txtHeureFin.Size = new System.Drawing.Size(311, 22);
             this.txtHeureFin.TabIndex = 39;
@@ -159,7 +160,7 @@
             // txtHeureDebut
             // 
             this.txtHeureDebut.Location = new System.Drawing.Point(21, 199);
-            this.txtHeureDebut.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtHeureDebut.Margin = new System.Windows.Forms.Padding(4);
             this.txtHeureDebut.Name = "txtHeureDebut";
             this.txtHeureDebut.Size = new System.Drawing.Size(311, 22);
             this.txtHeureDebut.TabIndex = 38;
@@ -187,7 +188,7 @@
             // txtTitre
             // 
             this.txtTitre.Location = new System.Drawing.Point(21, 69);
-            this.txtTitre.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtTitre.Margin = new System.Windows.Forms.Padding(4);
             this.txtTitre.Name = "txtTitre";
             this.txtTitre.Size = new System.Drawing.Size(311, 22);
             this.txtTitre.TabIndex = 35;
@@ -216,7 +217,7 @@
             // 
             this.txtDateAgenda.Format = System.Windows.Forms.DateTimePickerFormat.Short;
             this.txtDateAgenda.Location = new System.Drawing.Point(21, 135);
-            this.txtDateAgenda.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtDateAgenda.Margin = new System.Windows.Forms.Padding(4);
             this.txtDateAgenda.Name = "txtDateAgenda";
             this.txtDateAgenda.Size = new System.Drawing.Size(311, 22);
             this.txtDateAgenda.TabIndex = 54;
@@ -224,7 +225,7 @@
             // BtnFermer
             // 
             this.BtnFermer.Location = new System.Drawing.Point(1128, 15);
-            this.BtnFermer.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.BtnFermer.Margin = new System.Windows.Forms.Padding(4);
             this.BtnFermer.Name = "BtnFermer";
             this.BtnFermer.Size = new System.Drawing.Size(77, 23);
             this.BtnFermer.TabIndex = 55;
@@ -270,7 +271,7 @@
             this.Controls.Add(this.txtTitre);
             this.Controls.Add(this.label1);
             this.ForeColor = System.Drawing.SystemColors.HotTrack;
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "frmAgenda";
             this.Text = "Agenda";
             this.Load += new System.EventHandler(this.frmAgenda_Load);

@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using BdRvMedicalContexe = AppGroupe2.Model.BdRvMedicalContexe;
+using AppGroupe2.Helper;
 
 namespace AppGroupe2.View
 {
@@ -32,7 +33,9 @@ namespace AppGroupe2.View
             m.Tel = txtTelephone.Text;
             m.IdSpecialite = int.Parse(cbbSpecialite.SelectedValue.ToString());
             m.Identifiant = txtIdentifiant.Text;
-            m.Status = false;
+            m.MotDePasse = CryptString.GetMd5Hash("Passer");
+            m.IdRole = db.roles.Where(a=>a.code=="Med").FirstOrDefault().Id;
+            m.Status = true;
             db.Medecins.Add(m);
             db.SaveChanges();
             ResetForm();

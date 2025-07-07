@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.Entity;
-using MySql.Data.EntityFramework;
+using MySql.Data;
+using MySql.Data.Entity; 
+
 using System.Data.Entity.Migrations;
 
 
@@ -15,7 +17,7 @@ namespace AppGroupe2.Model
     public class BdRvMedicalContexe:DbContext
     {
 
-        public BdRvMedicalContexe() : base("bdRvMedicalContext") { }
+       // public BdRvMedicalContexe() : base("bdRvMedicalContext") { }
            
 
 
@@ -32,8 +34,11 @@ namespace AppGroupe2.Model
         public DbSet<Specialite> Specialites {  get; set; }
         public DbSet<GroupeSanguin> GroupeSanguins {  get; set; }
         public DbSet<Td_Erreur> Td_Erreurs{ get; set; }
+        public DbSet<Admin> admins { get; set; }
+        public DbSet<Role> roles { get; set; }
+        public DbSet<Produit> Produits { get; set; }
 
 
     }
-   
+
 }

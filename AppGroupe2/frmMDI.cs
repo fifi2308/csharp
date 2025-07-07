@@ -14,6 +14,7 @@ namespace AppGroupe2
 {
     public partial class frmMDI : Form
     {
+        public string role;
         public frmMDI()
         {
             InitializeComponent();
@@ -47,15 +48,21 @@ namespace AppGroupe2
             this.Width = myComputer.Screen.Bounds.Width;
             this.Height = myComputer.Screen.Bounds.Height;
             this.Location = new Point(0, 0);
+            if( role == "Admin")
+            {
+               couleurToolStripMenuItem.Visible = true;
+                planifierToolStripMenuItem.Visible = false;
+            }
+            else
+            {
+                couleurToolStripMenuItem.Visible = false;
+                planifierToolStripMenuItem.Visible = true;
+            }
         }
 
         private void rougeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            fermer();
-            frmPatient f = new frmPatient();
-            f.MdiParent = this;
-            f.Show();
-            f.WindowState = FormWindowState.Maximized;
+           
         }
 
         private void frmMDI_Load(object sender, EventArgs e)
@@ -63,22 +70,7 @@ namespace AppGroupe2
 
         }
 
-        private void medecinToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            fermer();
-            frmMedecin f = new frmMedecin();
-            f.MdiParent = this;
-            f.Show();
-            f.WindowState = FormWindowState.Maximized;
-        }
-
-        private void rendezvousToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            frmRendezVous frmRendezVous = new frmRendezVous();
-            frmRendezVous.MdiParent = this;
-            frmRendezVous.Show();
-            frmRendezVous.WindowState = FormWindowState.Maximized;
-        }
+       
 
         private void soinToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -86,6 +78,40 @@ namespace AppGroupe2
             frmsoin.MdiParent= this;
             frmsoin.Show();
             frmsoin.WindowState = FormWindowState.Maximized;
+        }
+
+        private void rendezVousToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            frmRendezVous frmRendezVous = new frmRendezVous();
+            frmRendezVous.MdiParent = this;
+            frmRendezVous.Show();
+            frmRendezVous.WindowState = FormWindowState.Maximized;
+
+        }
+
+        private void patientToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            fermer();
+            frmPatient f = new frmPatient();
+            f.MdiParent = this;
+            f.Show();
+            f.WindowState = FormWindowState.Maximized;
+
+        }
+
+        private void utulisateursToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            fermer();
+            frmMedecin f = new frmMedecin();
+            f.MdiParent = this;
+            f.Show();
+            f.WindowState = FormWindowState.Maximized;
+
+        }
+
+        private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+
         }
     }
 }

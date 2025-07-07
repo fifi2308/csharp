@@ -21,10 +21,11 @@ namespace AppGroupe2.View
             InitializeComponent();
         }
         BdRvMedicalContexe db = new BdRvMedicalContexe();
+        ServiceMetier.Service1Client service =new ServiceMetier.Service1Client();
 
         private void frmAgenda_Load(object sender, EventArgs e)
         {
-            var m = db.Medecins.Find(idMedecin);
+            var m = service.GetMedecinByID(idMedecin);
             lblMedecin.Text = string.Format("N ordre: {0}, Nom prenom: {1}",m.NumeroOrdre , m.NomPrenom);
             lblIdMedecin.Text = m.IDU.ToString();
             lblIdMedecin.Visible = false;
@@ -40,7 +41,7 @@ namespace AppGroupe2.View
         {
             try
             {
-                Agenda a = new Agenda();
+                ServiceMetier.Agenda a = new ServiceMetier.Agenda();
                 a.Creaneau = int.Parse(txtCrenau.Text);
                 a.HeureFin = txtHeureFin.Text;
                 a.HeureDebut = txtHeureDebut.Text;
@@ -48,8 +49,8 @@ namespace AppGroupe2.View
                 a.DatePlanifier = txtDateAgenda.Value;
                 a.Statut = "brouillon";
                 a.lieu = txtLieu.Text;
-                db.Agenda.Add(a);
-                db.SaveChanges();
+                service.AddAgenda(a);
+               
             }
             catch (Exception ex)
             {
@@ -64,7 +65,7 @@ namespace AppGroupe2.View
         }
         private void ResetForm()
         {
-            dgAgenda.DataSource = db.Agenda.Where(a => a.DatePlanifier >= DateTime.Now&& a.IdMedecin==idMedecin).ToList();
+            dgAgenda.DataSource = service.GetListeAgenda( ).Where(a => a.DatePlanifier >= DateTime.Now&& a.IdMedecin==idMedecin).ToList();
             txtCrenau.Text = string.Empty;
             txtDateAgenda.Text = string.Empty;
             txtHeureDebut.Text = string.Empty;
@@ -72,6 +73,11 @@ namespace AppGroupe2.View
             txtLieu.Text = string.Empty;
             txtTitre.Text= string.Empty;
             txtTitre.Focus();
+
+        }
+
+        private void btnModifier_Click(object sender, EventArgs e)
+        {
 
         }
     }

@@ -35,6 +35,7 @@ namespace AppGroupe2
             this.btnQuitter = new System.Windows.Forms.Button();
             this.btneConnecter = new System.Windows.Forms.Button();
             this.txtMotDePasse = new System.Windows.Forms.TextBox();
+            this.lblMessage = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
@@ -118,13 +119,23 @@ namespace AppGroupe2
             this.txtMotDePasse.UseSystemPasswordChar = true;
             this.txtMotDePasse.TextChanged += new System.EventHandler(this.txtMotDePasse_TextChanged);
             // 
+            // lblMessage
+            // 
+            this.lblMessage.AutoSize = true;
+            this.lblMessage.ForeColor = System.Drawing.Color.Red;
+            this.lblMessage.Location = new System.Drawing.Point(57, 417);
+            this.lblMessage.Name = "lblMessage";
+            this.lblMessage.Size = new System.Drawing.Size(0, 16);
+            this.lblMessage.TabIndex = 8;
+            // 
             // frmConnexion
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = global::AppGroupe2.Properties.Resources.cbb76f585461a507da0c8e8553693ddb;
-            this.ClientSize = new System.Drawing.Size(748, 383);
+            this.ClientSize = new System.Drawing.Size(748, 489);
             this.ControlBox = false;
+            this.Controls.Add(this.lblMessage);
             this.Controls.Add(this.txtMotDePasse);
             this.Controls.Add(this.btneConnecter);
             this.Controls.Add(this.btnQuitter);
@@ -150,6 +161,7 @@ namespace AppGroupe2
         private System.Windows.Forms.Button btnQuitter;
         private System.Windows.Forms.Button btneConnecter;
         private System.Windows.Forms.TextBox txtMotDePasse;
+        private System.Windows.Forms.Label lblMessage;
     }
 }
 
