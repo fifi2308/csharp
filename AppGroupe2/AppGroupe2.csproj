@@ -297,6 +297,10 @@
     <Compile Include="Migrations\202506021837118_Init.Designer.cs">
       <DependentUpon>202506021837118_Init.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202507081523313_MiseAJourProduit.cs" />
+    <Compile Include="Migrations\202507081523313_MiseAJourProduit.Designer.cs">
+      <DependentUpon>202507081523313_MiseAJourProduit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\Admin.cs" />
     <Compile Include="Model\Agenda.cs" />
@@ -373,6 +377,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202506021837118_Init.resx">
       <DependentUpon>202506021837118_Init.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202507081523313_MiseAJourProduit.resx">
+      <DependentUpon>202507081523313_MiseAJourProduit.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

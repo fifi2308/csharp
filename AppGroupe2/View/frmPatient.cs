@@ -1,25 +1,103 @@
+using AppGroupe2.Model;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using AppGroupe2.Model;
+
 namespace AppGroupe2.View
 {
     public partial class frmPatient : Form
     {
-        BdRvMedicalContexe db = new BdRvMedicalContexe();
+        private HttpClient client;
+
         public frmPatient()
         {
             InitializeComponent();
+
+            client = new HttpClient();
+            client.BaseAddress = new Uri(System.Configuration.ConfigurationManager.AppSettings["ServerApiURL"]);
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
+        private async void frmPatient_Load(object sender, EventArgs e)
+        {
+            await ChargerListePatients();
+            ResetForm();
+        }
 
-        public object CurrentRow { get; private set; }
+        private async Task ChargerListePatients()
+        {
+            try
+            {
+                var response = await client.GetAsync("api/Patients");
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    var patients = JsonConvert.DeserializeObject<List<Patient>>(json);
+                    dgPatient.DataSource = patients;
+                }
+                else
+                {
+                    MessageBox.Show("Erreur lors du chargement des patients.");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erreur : " + ex.Message);
+            }
+        }
+
+        private async Task<bool> AjouterPatientAsync(Patient p)
+        {
+            try
+            {
+                var json = JsonConvert.SerializeObject(p);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var response = await client.PostAsync("api/Patients", content);
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erreur lors de l'ajout : " + ex.Message);
+                return false;
+            }
+        }
+
+        private async Task<bool> ModifierPatientAsync(int id, Patient p)
+        {
+            try
+            {
+                var json = JsonConvert.SerializeObject(p);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var response = await client.PutAsync($"api/Patients/{id}", content);
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erreur lors de la modification : " + ex.Message);
+                return false;
+            }
+        }
+
+        private async Task<bool> SupprimerPatientAsync(int id)
+        {
+            try
+            {
+                var response = await client.DeleteAsync($"api/Patients/{id}");
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erreur lors de la suppression : " + ex.Message);
+                return false;
+            }
+        }
 
         private void ResetForm()
         {
@@ -30,92 +108,153 @@ namespace AppGroupe2.View
             txtPoid.Text = string.Empty;
             txtTaille.Text = string.Empty;
             txtTelephone.Text = string.Empty;
-            dgPatient.DataSource = db.Patients.ToList();
             txtNomPrenom.Focus();
-
         }
 
-        private void btnAjouter_Click(object sender, EventArgs e)
+        private async void btnAjouter_Click(object sender, EventArgs e)
         {
-            Patient p = new Patient();
-            p.NomPrenom = txtNomPrenom.Text;
-            p.Adresse = txtAdresse.Text;
-            p.Tel = txtTelephone.Text;
-            p.Email = txtEmail.Text;
-            p.Poids = float.Parse(txtTaille.Text);
-            p.Taille = float.Parse(txtTaille.Text);
-            p.GroupSanguin = txtGroupeSanguin.Text;
-            db.Patients.Add(p);
-            db.SaveChanges();
-            ResetForm();
+            if (!float.TryParse(txtPoid.Text, out float poids) ||
+                !float.TryParse(txtTaille.Text, out float taille))
+            {
+                MessageBox.Show("Veuillez saisir des valeurs valides pour le poids et la taille.");
+                return;
+            }
 
+            var patient = new Patient
+            {
+                NomPrenom = txtNomPrenom.Text.Trim(),
+                Adresse = txtAdresse.Text.Trim(),
+                Tel = txtTelephone.Text.Trim(),
+                Email = txtEmail.Text.Trim(),
+                Poids = poids,
+                Taille = taille,
+                GroupSanguin = txtGroupeSanguin.Text.Trim()
+            };
 
+            var success = await AjouterPatientAsync(patient);
+
+            if (success)
+            {
+                MessageBox.Show("Patient ajouté avec succès.");
+                await ChargerListePatients();
+                ResetForm();
+            }
+            else
+            {
+                MessageBox.Show("Erreur lors de l'ajout du patient.");
+            }
         }
 
-        private void frmPatient_Load(object sender, EventArgs e)
+        private async void btnModifier_Click(object sender, EventArgs e)
         {
-            ResetForm();
+            if (dgPatient.CurrentRow == null)
+            {
+                MessageBox.Show("Veuillez sélectionner un patient à modifier.");
+                return;
+            }
+
+            int id = Convert.ToInt32(dgPatient.CurrentRow.Cells["IDU"].Value); // Assure-toi que le nom de colonne est correct
+
+            if (!float.TryParse(txtPoid.Text, out float poids) ||
+                !float.TryParse(txtTaille.Text, out float taille))
+            {
+                MessageBox.Show("Veuillez saisir des valeurs valides pour le poids et la taille.");
+                return;
+            }
+
+            var patient = new Patient
+            {
+                NomPrenom = txtNomPrenom.Text.Trim(),
+                Adresse = txtAdresse.Text.Trim(),
+                Tel = txtTelephone.Text.Trim(),
+                Email = txtEmail.Text.Trim(),
+                Poids = poids,
+                Taille = taille,
+                GroupSanguin = txtGroupeSanguin.Text.Trim()
+            };
+
+            var success = await ModifierPatientAsync(id, patient);
+
+            if (success)
+            {
+                MessageBox.Show("Patient modifié avec succès.");
+                await ChargerListePatients();
+                ResetForm();
+            }
+            else
+            {
+                MessageBox.Show("Erreur lors de la modification.");
+            }
+        }
+
+        private async void btnSupprimer_Click(object sender, EventArgs e)
+        {
+            if (dgPatient.CurrentRow == null)
+            {
+                MessageBox.Show("Veuillez sélectionner un patient à supprimer.");
+                return;
+            }
+
+            int id = Convert.ToInt32(dgPatient.CurrentRow.Cells["IDU"].Value); // Assure-toi que le nom de colonne est correct
+
+            var confirm = MessageBox.Show("Êtes-vous sûr de vouloir supprimer ce patient ?", "Confirmation", MessageBoxButtons.YesNo);
+            if (confirm == DialogResult.Yes)
+            {
+                var success = await SupprimerPatientAsync(id);
+                if (success)
+                {
+                    MessageBox.Show("Patient supprimé avec succès.");
+                    await ChargerListePatients();
+                    ResetForm();
+                }
+                else
+                {
+                    MessageBox.Show("Erreur lors de la suppression.");
+                }
+            }
         }
 
         private void btnChoisir_Click(object sender, EventArgs e)
         {
-            txtNomPrenom.Text = dgPatient.CurrentRow.Cells[4].Value.ToString();
-            txtAdresse.Text = dgPatient.CurrentRow.Cells[5].Value.ToString();
-            txtEmail.Text = dgPatient.CurrentRow.Cells[6].Value.ToString();
-            txtTelephone.Text = dgPatient.CurrentRow.Cells[7].Value.ToString();
-            txtGroupeSanguin.Text = dgPatient.CurrentRow.Cells[0].Value.ToString();
-            txtPoid.Text = dgPatient.CurrentRow.Cells[1].Value.ToString();
-            txtTaille.Text = dgPatient.CurrentRow.Cells[2].Value.ToString();
+            if (dgPatient.CurrentRow == null)
+                return;
 
-
-
+            txtNomPrenom.Text = dgPatient.CurrentRow.Cells["NomPrenom"].Value.ToString();
+            txtAdresse.Text = dgPatient.CurrentRow.Cells["Adresse"].Value.ToString();
+            txtEmail.Text = dgPatient.CurrentRow.Cells["Email"].Value.ToString();
+            txtTelephone.Text = dgPatient.CurrentRow.Cells["Tel"].Value.ToString();
+            txtGroupeSanguin.Text = dgPatient.CurrentRow.Cells["GroupSanguin"].Value?.ToString() ?? "";
+            txtPoid.Text = dgPatient.CurrentRow.Cells["Poids"].Value?.ToString() ?? "";
+            txtTaille.Text = dgPatient.CurrentRow.Cells["Taille"].Value?.ToString() ?? "";
         }
 
-        private void btnModifier_Click(object sender, EventArgs e)
+        private async void btnRechercher_Click(object sender, EventArgs e)
         {
-            int? id = int.Parse(dgPatient.CurrentRow.Cells[3].Value.ToString());
-            if (id.HasValue)
+            try
             {
-                var p = db.Patients.Find(id);
-                p.NomPrenom = txtNomPrenom.Text;
-                p.Adresse = txtAdresse.Text;
-                p.Tel = txtTelephone.Text;
-                p.Email = txtEmail.Text;
-                p.Poids = float.Parse(txtTaille.Text);
-                p.GroupSanguin = txtGroupeSanguin.Text;
-                db.SaveChanges();
-                ResetForm();
-
-            }
-        }
-
-        private void btnSupprimer_Click(object sender, EventArgs e)
-        {
-            int? id = int.Parse(dgPatient.CurrentRow.Cells[3].Value.ToString());
-            if (id.HasValue)
-            {
-                var p = db.Patients.Find(id);
-                db.Patients.Remove(p);
-                db.SaveChanges();
-                ResetForm();
-
-            }
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            var liste = db.Patients.ToList();
-            if (!string.IsNullOrEmpty(txtEmail.Text))
-            {
-                liste = (List<Patient>)liste.Where(a => a.Email.ToUpper() == txtEmail.Text.ToUpper());
-                if (!string.IsNullOrEmpty(txtTelephone.Text))
+                var response = await client.GetAsync("api/Patients");
+                if (response.IsSuccessStatusCode)
                 {
-                    liste = (List<Patient>)liste.Where(a => a.Tel.ToUpper() == txtTelephone.Text.ToUpper());
+                    var json = await response.Content.ReadAsStringAsync();
+                    var liste = JsonConvert.DeserializeObject<List<Patient>>(json);
 
+                    if (!string.IsNullOrEmpty(txtEmail.Text))
+                    {
+                        liste = liste.Where(a => a.Email != null && a.Email.Equals(txtEmail.Text, StringComparison.OrdinalIgnoreCase)).ToList();
+                    }
+
+                    if (!string.IsNullOrEmpty(txtTelephone.Text))
+                    {
+                        liste = liste.Where(a => a.Tel != null && a.Tel.Equals(txtTelephone.Text, StringComparison.OrdinalIgnoreCase)).ToList();
+                    }
+
+                    dgPatient.DataSource = liste;
                 }
-                dgPatient.DataSource = liste;
             }
-
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erreur lors de la recherche : " + ex.Message);
+            }
         }
     }
 }

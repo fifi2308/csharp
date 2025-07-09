@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace APIRvMedical.Models
 {
-    public class Patient: Personne
+    public class Patient: Utilisateur
     {
         [Required, MaxLength(3)]
         public string GroupSanguin { get; set; }

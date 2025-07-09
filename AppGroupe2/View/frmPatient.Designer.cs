@@ -248,7 +248,7 @@
             this.buttonRechercher.TabIndex = 14;
             this.buttonRechercher.Text = "Rechercher";
             this.buttonRechercher.UseVisualStyleBackColor = true;
-            this.buttonRechercher.Click += new System.EventHandler(this.button1_Click);
+            //this.buttonRechercher.Click += new System.EventHandler(this.button1_Click);
             // 
             // button2
             // 

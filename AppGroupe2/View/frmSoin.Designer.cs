@@ -171,7 +171,7 @@
             this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "frmSoin";
             this.Text = "frmSoin";
-            this.Load += new System.EventHandler(this.frmSoin_Load_1);
+            //this.Load += new System.EventHandler(this.frmSoin_Load_1);
             ((System.ComponentModel.ISupportInitialize)(this.dgSoin)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

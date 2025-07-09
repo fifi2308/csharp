@@ -20,15 +20,19 @@ namespace AppGroupe2
             
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new frmProduit());
             CreateAdmin();
+            Application.Run(new frmMedecin());
+            
         }
         static void CreateAdmin()
         {
             using (var bd = new BdRvMedicalContexe())
             {
                 // Vérifier si le rôle "admin" existe, sinon le créer
-                var adminRole = bd.roles.FirstOrDefault(r => r.code.ToLower() == "admin");
+
+                //var adminRole = bd.roles.FirstOrDefault(r => r.code.ToLower() == "admin");
+                var adminRole = bd.roles.FirstOrDefault(r => r.code != null && r.code.ToLower() == "admin");
+
                 if (adminRole == null)
                 {
                     adminRole = new Role

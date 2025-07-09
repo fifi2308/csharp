@@ -86,7 +86,7 @@
             this.Designation.Size = new System.Drawing.Size(79, 16);
             this.Designation.TabIndex = 3;
             this.Designation.Text = "Designation";
-            this.Designation.Click += new System.EventHandler(this.label2_Click);
+            //this.Designation.Click += new System.EventHandler(this.label2_Click);
             // 
             // txtPU
             // 

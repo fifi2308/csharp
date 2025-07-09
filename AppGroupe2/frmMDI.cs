@@ -1,13 +1,8 @@
 using AppGroupe2.View;
 using Microsoft.VisualBasic.Devices;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace AppGroupe2
@@ -15,13 +10,49 @@ namespace AppGroupe2
     public partial class frmMDI : Form
     {
         public string role;
+
         public frmMDI()
         {
             InitializeComponent();
         }
 
+        private void frmMDI_Load(object sender, EventArgs e)
+        {
+            // Plein écran
+            Computer myComputer = new Computer();
+            this.Width = myComputer.Screen.Bounds.Width;
+            this.Height = myComputer.Screen.Bounds.Height;
+            this.Location = new Point(0, 0);
+
+            // Affichage dynamique des menus selon rôle
+            AfficherMenusSelonRole();
+        }
+
+        private void AfficherMenusSelonRole()
+        {
+            if (role == "Admin")
+            {
+                couleurToolStripMenuItem.Visible = true;
+                planifierToolStripMenuItem.Visible = false;
+                utulisateursToolStripMenuItem.Visible = true;
+            }
+            else if (role == "Med")
+            {
+                couleurToolStripMenuItem.Visible = false;
+                planifierToolStripMenuItem.Visible = true;
+                utulisateursToolStripMenuItem.Visible = false;
+            }
+            else
+            {
+                couleurToolStripMenuItem.Visible = false;
+                planifierToolStripMenuItem.Visible = false;
+                utulisateursToolStripMenuItem.Visible = false;
+            }
+        }
+
         private void seDeconnecterToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            // Fermeture de session
             frmConnexion f = new frmConnexion();
             f.Show();
             this.Close();
@@ -31,87 +62,51 @@ namespace AppGroupe2
         {
             Application.Exit();
         }
+
         private void fermer()
         {
-            Form[] charr = this.MdiChildren;
-
-            //For each child form set the window state to Maximized 
-            foreach (Form chform in charr)
+            foreach (Form child in this.MdiChildren)
             {
-                //chform.WindowState = FormWindowState.Maximized;
-                chform.Close();
+                child.Close();
             }
         }
-        private void frmMdiParent_Load(object sender, EventArgs e)
-        {
-            Computer myComputer = new Computer();
-            this.Width = myComputer.Screen.Bounds.Width;
-            this.Height = myComputer.Screen.Bounds.Height;
-            this.Location = new Point(0, 0);
-            if( role == "Admin")
-            {
-               couleurToolStripMenuItem.Visible = true;
-                planifierToolStripMenuItem.Visible = false;
-            }
-            else
-            {
-                couleurToolStripMenuItem.Visible = false;
-                planifierToolStripMenuItem.Visible = true;
-            }
-        }
-
-        private void rougeToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-           
-        }
-
-        private void frmMDI_Load(object sender, EventArgs e)
-        {
-
-        }
-
-       
 
         private void soinToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            frmSoin frmsoin = new frmSoin();
-            frmsoin.MdiParent= this;
-            frmsoin.Show();
-            frmsoin.WindowState = FormWindowState.Maximized;
+            OuvrirFormUnique(new frmSoin());
         }
 
         private void rendezVousToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            frmRendezVous frmRendezVous = new frmRendezVous();
-            frmRendezVous.MdiParent = this;
-            frmRendezVous.Show();
-            frmRendezVous.WindowState = FormWindowState.Maximized;
-
+            OuvrirFormUnique(new frmRendezVous());
         }
 
         private void patientToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            fermer();
-            frmPatient f = new frmPatient();
-            f.MdiParent = this;
-            f.Show();
-            f.WindowState = FormWindowState.Maximized;
-
+            OuvrirFormUnique(new frmPatient());
         }
 
         private void utulisateursToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            fermer();
-            frmMedecin f = new frmMedecin();
-            f.MdiParent = this;
-            f.Show();
-            f.WindowState = FormWindowState.Maximized;
+            OuvrirFormUnique(new frmMedecin());
+        }
 
+        private void OuvrirFormUnique(Form form)
+        {
+            fermer(); // Fermer tous les formulaires ouverts
+            form.MdiParent = this;
+            form.WindowState = FormWindowState.Maximized;
+            form.Show();
         }
 
         private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
+            // (optionnel)
+        }
 
+        private void rougeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.BackColor = Color.Red;
         }
     }
 }

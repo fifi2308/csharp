@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Data.Entity;
 using MySql.Data.EntityFramework;
 using System.Data.Entity.Migrations;
+using AppGroupe2.Model;
+
 
 
 namespace APIRvMedical.Models
@@ -35,6 +37,8 @@ namespace APIRvMedical.Models
         public DbSet<Admin> admins { get; set; }
         public DbSet<Role> roles { get; set; }
         public DbSet<Produit> Produits { get; set; }
+       
+
 
     }
 

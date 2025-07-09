@@ -71,7 +71,7 @@ namespace AppGroupe2
             this.txtidentifiant.Name = "txtidentifiant";
             this.txtidentifiant.Size = new System.Drawing.Size(363, 22);
             this.txtidentifiant.TabIndex = 2;
-            this.txtidentifiant.TextChanged += new System.EventHandler(this.txtidentifiant_TextChanged);
+            //this.txtidentifiant.TextChanged += new System.EventHandler(this.txtidentifiant_TextChanged);
             // 
             // label3
             // 
@@ -117,7 +117,7 @@ namespace AppGroupe2
             this.txtMotDePasse.Size = new System.Drawing.Size(363, 22);
             this.txtMotDePasse.TabIndex = 7;
             this.txtMotDePasse.UseSystemPasswordChar = true;
-            this.txtMotDePasse.TextChanged += new System.EventHandler(this.txtMotDePasse_TextChanged);
+            //this.txtMotDePasse.TextChanged += new System.EventHandler(this.txtMotDePasse_TextChanged);
             // 
             // lblMessage
             // 

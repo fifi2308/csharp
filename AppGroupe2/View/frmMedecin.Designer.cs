@@ -222,7 +222,7 @@
             this.dgMedecin.RowHeadersWidth = 51;
             this.dgMedecin.Size = new System.Drawing.Size(821, 513);
             this.dgMedecin.TabIndex = 31;
-            this.dgMedecin.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgMedecin_CellContentClick);
+            //this.dgMedecin.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgMedecin_CellContentClick);
             // 
             // btnAgenda
             // 

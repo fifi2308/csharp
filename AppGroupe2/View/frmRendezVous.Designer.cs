@@ -238,7 +238,7 @@
             this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "frmRendezVous";
             this.Text = "RendezVous";
-            this.Load += new System.EventHandler(this.frmRendezVous_Load_1);
+           // this.Load += new System.EventHandler(this.frmRendezVous_Load_1);
             ((System.ComponentModel.ISupportInitialize)(this.dgRendezVous)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

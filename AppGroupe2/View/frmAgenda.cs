@@ -1,84 +1,153 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using AppGroupe2.Helper;
 using AppGroupe2.Model;
+using Newtonsoft.Json;
+using System.Linq;
 
 namespace AppGroupe2.View
 {
     public partial class frmAgenda : Form
     {
         public int idMedecin;
-        Utils utils = new Utils();
+        private HttpClient client;
+
         public frmAgenda()
         {
             InitializeComponent();
+            client = new HttpClient();
+            client.BaseAddress = new Uri(System.Configuration.ConfigurationManager.AppSettings["ServerApiURL"]);
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
-        BdRvMedicalContexe db = new BdRvMedicalContexe();
-        ServiceMetier.Service1Client service =new ServiceMetier.Service1Client();
 
-        private void frmAgenda_Load(object sender, EventArgs e)
+        private async void frmAgenda_Load(object sender, EventArgs e)
         {
-            var m = service.GetMedecinByID(idMedecin);
-            lblMedecin.Text = string.Format("N ordre: {0}, Nom prenom: {1}",m.NumeroOrdre , m.NomPrenom);
-            lblIdMedecin.Text = m.IDU.ToString();
-            lblIdMedecin.Visible = false;
+            await ChargerMedecin();
+            await ChargerAgenda();
             ResetForm();
+        }
+
+        private async Task ChargerMedecin()
+        {
+            try
+            {
+                var response = await client.GetAsync($"api/Medecins/{idMedecin}");
+                if (response.IsSuccessStatusCode)
+                {
+                    var jsonData = await response.Content.ReadAsStringAsync();
+                    var medecin = JsonConvert.DeserializeObject<Medecin>(jsonData);
+                    lblMedecin.Text = $"N ordre: {medecin.NumeroOrdre}, Nom prenom: {medecin.NomPrenom}";
+                    lblIdMedecin.Text = medecin.IDU.ToString();
+                    lblIdMedecin.Visible = false;
+                }
+                else
+                {
+                    MessageBox.Show("Erreur lors du chargement du médecin.");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erreur : " + ex.Message);
+            }
+        }
+
+        private async Task ChargerAgenda()
+        {
+            try
+            {
+                var response = await client.GetAsync("api/Agenda");
+                if (response.IsSuccessStatusCode)
+                {
+                    var jsonData = await response.Content.ReadAsStringAsync();
+                    var agendas = JsonConvert.DeserializeObject<List<Agenda>>(jsonData);
+                    // Filtrer les agendas pour le médecin connecté et les dates futures
+                    var agendasMedecin = agendas
+                        .Where(a => a.IdMedecin == idMedecin && a.DatePlanifier >= DateTime.Now)
+                        .ToList();
+
+                    dgAgenda.DataSource = null;
+                    dgAgenda.DataSource = agendasMedecin;
+                }
+                else
+                {
+                    MessageBox.Show("Erreur lors du chargement des agendas.");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erreur : " + ex.Message);
+            }
+        }
+
+        private async Task<bool> AjouterAgendaAsync(Agenda agenda)
+        {
+            try
+            {
+                var json = JsonConvert.SerializeObject(agenda);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var response = await client.PostAsync("api/Agenda", content);
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erreur lors de l'ajout : " + ex.Message);
+                return false;
+            }
+        }
+
+        private async void btnAjouter_Click(object sender, EventArgs e)
+        {
+            if (!int.TryParse(txtCrenau.Text, out int crenau))
+            {
+                MessageBox.Show("Veuillez saisir un créneau valide (nombre entier).");
+                return;
+            }
+
+            var agenda = new Agenda
+            {
+                Creaneau = crenau,
+                HeureDebut = txtHeureDebut.Text.Trim(),
+                HeureFin = txtHeureFin.Text.Trim(),
+                IdMedecin = idMedecin,
+                DatePlanifier = txtDateAgenda.Value,
+                Statut = "brouillon",
+                lieu = txtLieu.Text.Trim(),
+                Titre = txtTitre.Text.Trim()
+            };
+
+            bool success = await AjouterAgendaAsync(agenda);
+
+            if (success)
+            {
+                MessageBox.Show("Agenda ajouté avec succès.");
+                await ChargerAgenda();
+                ResetForm();
+            }
+            else
+            {
+                MessageBox.Show("Erreur lors de l'ajout de l'agenda.");
+            }
+        }
+
+        private void ResetForm()
+        {
+            txtCrenau.Text = string.Empty;
+            txtHeureDebut.Text = string.Empty;
+            txtHeureFin.Text = string.Empty;
+            txtLieu.Text = string.Empty;
+            txtTitre.Text = string.Empty;
+            txtDateAgenda.Value = DateTime.Now;
+            txtTitre.Focus();
         }
 
         private void BtnFermer_Click(object sender, EventArgs e)
         {
             this.Close();
-        }
-
-        private void btnAjouter_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                ServiceMetier.Agenda a = new ServiceMetier.Agenda();
-                a.Creaneau = int.Parse(txtCrenau.Text);
-                a.HeureFin = txtHeureFin.Text;
-                a.HeureDebut = txtHeureDebut.Text;
-                a.IdMedecin = idMedecin;
-                a.DatePlanifier = txtDateAgenda.Value;
-                a.Statut = "brouillon";
-                a.lieu = txtLieu.Text;
-                service.AddAgenda(a);
-               
-            }
-            catch (Exception ex)
-            {
-                utils.WriteDataError("frmAgenda-btnAjouter_Click",ex.ToString());
-            }
-
-            finally {
-                ResetForm();
-            }
-           
-         
-        }
-        private void ResetForm()
-        {
-            dgAgenda.DataSource = service.GetListeAgenda( ).Where(a => a.DatePlanifier >= DateTime.Now&& a.IdMedecin==idMedecin).ToList();
-            txtCrenau.Text = string.Empty;
-            txtDateAgenda.Text = string.Empty;
-            txtHeureDebut.Text = string.Empty;
-            txtHeureFin.Text = string.Empty;
-            txtLieu.Text = string.Empty;
-            txtTitre.Text= string.Empty;
-            txtTitre.Focus();
-
-        }
-
-        private void btnModifier_Click(object sender, EventArgs e)
-        {
-
         }
     }
 }

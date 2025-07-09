@@ -1,86 +1,128 @@
 using AppGroupe2.Model;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using AppGroupe2.View;
 
 namespace AppGroupe2.View
 {
-
     public partial class frmRendezVous : Form
     {
+        HttpClient client = new HttpClient();
 
-       
         public frmRendezVous()
         {
             InitializeComponent();
-            this.Load += new EventHandler(frmRendezVous_Load);
-        }
-        BdRvMedicalContexe db = new BdRvMedicalContexe();
+            client.BaseAddress = new Uri(System.Configuration.ConfigurationManager.AppSettings["ServerApiURL"]);
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-        private void frmRendezVous_Load(object sender, EventArgs e)
-        {
-            // Charger les patients dans le ComboBox
-            cbPatient.DataSource = db.Patients.ToList();
-            cbPatient.DisplayMember = "NomPrenom"; // Afficher le nom du patient
-            cbPatient.ValueMember = "IDU"; // Utiliser l'ID du patient comme valeur
-
-            // Charger les médecins dans le ComboBox
-            cbMedecin.DataSource = db.Medecins.ToList();
-            cbMedecin.DisplayMember = "NomPrenom"; // Afficher le nom du médecin
-            cbMedecin.ValueMember = "IDU"; // Utiliser l'ID du médecin comme valeur
-
-            // Charger les soins dans le ComboBox
-            cbSoin.DataSource = db.Soins.ToList();
-            cbSoin.DisplayMember = "libelle"; // Afficher le nom du soin
-            cbSoin.ValueMember = "IdSoin"; // Utiliser l'ID du soin comme valeur
-
-            // Charger la liste des rendez-vous dans le DataGridView
-            var rendezVousList = db.RendezVous
-              .Select(rv => new
-                  {
-                     rv.IdRv,
-                     rv.DateRv,
-                     rv.Statut,
-                     Patient = rv.patient.NomPrenom,  // Remplace l'ID du patient par son nom
-                     Medecin = rv.Medecin.NomPrenom,  // Remplace l'ID du médecin par son nom
-                     Soin = rv.Soin.libelle         // Remplace l'ID du soin par son libellé
-                 })
-                     .ToList();
-
-                      dgRendezVous.DataSource = rendezVousList;
-
+            this.Load += frmRendezVous_Load;
         }
 
-        private void btnAjouter_Click(object sender, EventArgs e)
+        private async void frmRendezVous_Load(object sender, EventArgs e)
         {
-            RendezVous rendezVous = new RendezVous
+            await LoadComboPatients();
+            await LoadComboMedecins();
+            await LoadComboSoins();
+            await LoadRendezVous();
+        }
+
+        private async System.Threading.Tasks.Task LoadComboPatients()
+        {
+            var res = await client.GetAsync("api/Patients");
+            if (res.IsSuccessStatusCode)
             {
+                var data = await res.Content.ReadAsStringAsync();
+                var patients = JsonConvert.DeserializeObject<List<Patient>>(data);
+                cbPatient.DataSource = patients;
+                cbPatient.DisplayMember = "NomPrenom";
+                cbPatient.ValueMember = "IDU";
+            }
+        }
 
+        private async System.Threading.Tasks.Task LoadComboMedecins()
+        {
+            var res = await client.GetAsync("api/Medecins");
+            if (res.IsSuccessStatusCode)
+            {
+                var data = await res.Content.ReadAsStringAsync();
+                var medecins = JsonConvert.DeserializeObject<List<Medecin>>(data);
+                cbMedecin.DataSource = medecins;
+                cbMedecin.DisplayMember = "NomPrenom";
+                cbMedecin.ValueMember = "IDU";
+            }
+        }
+
+        private async System.Threading.Tasks.Task LoadComboSoins()
+        {
+            var res = await client.GetAsync("api/Soins");
+            if (res.IsSuccessStatusCode)
+            {
+                var data = await res.Content.ReadAsStringAsync();
+                var soins = JsonConvert.DeserializeObject<List<Soin>>(data);
+                cbSoin.DataSource = soins;
+                cbSoin.DisplayMember = "libelle";
+                cbSoin.ValueMember = "IdSoin";
+            }
+        }
+
+        private async System.Threading.Tasks.Task LoadRendezVous()
+        {
+            var res = await client.GetAsync("api/RendezVous");
+            if (res.IsSuccessStatusCode)
+            {
+                var data = await res.Content.ReadAsStringAsync();
+                var rvs = JsonConvert.DeserializeObject<List<RendezVous>>(data);
+
+                var listeAffichee = rvs.Select(rv => new
+                {
+                    rv.IdRv,
+                    rv.DateRv,
+                    rv.Statut,
+                    Patient = rv.patient?.NomPrenom ?? "N/A",
+                    Medecin = rv.Medecin?.NomPrenom ?? "N/A",
+                    Soin = rv.Soin?.libelle ?? "N/A"
+                }).ToList();
+
+                dgRendezVous.DataSource = listeAffichee;
+            }
+        }
+
+        private async void btnAjouter_Click(object sender, EventArgs e)
+        {
+            if (cbPatient.SelectedValue == null || cbMedecin.SelectedValue == null || cbSoin.SelectedValue == null)
+            {
+                MessageBox.Show("Veuillez sélectionner un patient, un médecin et un soin.");
+                return;
+            }
+
+            RendezVous rv = new RendezVous
+            {
                 DateRv = dtpDateRv.Value,
                 Statut = txtStatut.Text,
-                IdPatient = (int)cbPatient.SelectedValue,
-                IdMedecin = (int)cbMedecin.SelectedValue,
-                IdSoin = (int)cbSoin.SelectedValue
+                IdPatient = Convert.ToInt32(cbPatient.SelectedValue),
+                IdMedecin = Convert.ToInt32(cbMedecin.SelectedValue),
+                IdSoin = Convert.ToInt32(cbSoin.SelectedValue)
             };
 
-            // Ajouter le rendez-vous à la base de données
-            db.RendezVous.Add(rendezVous);
-            db.SaveChanges();
+            var json = JsonConvert.SerializeObject(rv);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            // Recharger la liste des rendez-vous
-            dgRendezVous.DataSource = db.RendezVous.ToList();
-        }
-
-        private void frmRendezVous_Load_1(object sender, EventArgs e)
-        {
-
+            var res = await client.PostAsync("api/RendezVous", content);
+            if (res.IsSuccessStatusCode)
+            {
+                MessageBox.Show("Rendez-vous ajouté avec succès.");
+                await LoadRendezVous();
+            }
+            else
+            {
+                MessageBox.Show("Erreur lors de l’ajout du rendez-vous.");
+            }
         }
     }
 }

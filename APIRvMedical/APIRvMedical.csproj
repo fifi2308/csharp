@@ -277,6 +277,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\GroupeSanguinController.cs" />
     <Content Include="Global.asax" />
     <Content Include="Models\EntityRvMedical.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -292,7 +293,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\AgendaController.cs" />
+    <Compile Include="Controllers\MedecinController.cs" />
+    <Compile Include="Controllers\PatientController.cs" />
+    <Compile Include="Controllers\PersonnesController.cs" />
     <Compile Include="Controllers\ProduitsController.cs" />
+    <Compile Include="Controllers\RendezVousController.cs" />
+    <Compile Include="Controllers\RoleController.cs" />
+    <Compile Include="Controllers\SecretaireController.cs" />
+    <Compile Include="Controllers\SoinsController.cs" />
+    <Compile Include="Controllers\SpecialiteController.cs" />
+    <Compile Include="Controllers\UtilisateurController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -347,6 +358,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="PublicPages\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AppGroupe2\AppGroupe2.csproj">

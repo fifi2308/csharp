@@ -17,8 +17,9 @@ namespace AppGroupe2.Model
     public class BdRvMedicalContexe:DbContext
     {
 
-       // public BdRvMedicalContexe() : base("bdRvMedicalContext") { }
-           
+        public BdRvMedicalContexe() : base("BdRvMedicalContext") { }
+
+
 
 
         public DbSet<Personne> Personnes { get; set; }
@@ -37,6 +38,7 @@ namespace AppGroupe2.Model
         public DbSet<Admin> admins { get; set; }
         public DbSet<Role> roles { get; set; }
         public DbSet<Produit> Produits { get; set; }
+       
 
 
     }
